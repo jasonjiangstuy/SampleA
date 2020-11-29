@@ -13,6 +13,7 @@ clock = pygame.time.Clock()
 # create images
 font = pygame.font.Font('freesansbold.ttf', 30) 
 
+
 # make text
 spanish = font.render('Spanish', True, (0,0,0))
 french = font.render('French', True, (0,0,0))
@@ -25,10 +26,16 @@ frenchOn = False
 spanishCheck = Rect(180, 95, 20, 20)
 frenchCheck = Rect(550, 95, 20, 20)
 
+
+
+
+
 # create color ovals
 # color tuple, number, location
 class color:
-    def __init__(self, name, color,  TargetLocation, TargetSurface, rectx, recty):
+    def __init__(self, name, color,  TargetLocation, TargetSurface, rectx, recty, errorTimeConst = 30):
+        self.errorTimeConst = errorTimeConst
+        self.errorTime = 0
         self.TargetLocation = TargetLocation
         self.name = name
         self.TargetSurface = TargetSurface
@@ -51,15 +58,33 @@ class color:
 
     def paste(self):
         self.TargetSurface.blit(self.surface, self.TargetLocation)
+        if (self.errorTime > 0):
+            self.errorTime -= 1
+            gameDisplay.blit(self.error, (280, 51))
+        elif (self.errorTime <= 0):
+            self.error = font.render('', True, (0,0,0))
+            gameDisplay.blit(self.error, (280, 51))
 
     def clicked(self, point, spanishOn, frenchOn):
         testRect = Rect(self.TargetLocation, (self.rectx, self.recty))
         if (testRect.collidepoint(point)):
             if (spanishOn and frenchOn):
                 # spanishOn true and frenchOn true
+
+                # create error message
+
+
+                self.errorTime = self.errorTimeConst
+                self.error = font.render('Only select one language!', True, (0,0,0))
                 print("Only select one language!")
+
             elif(not spanishOn and not frenchOn):
                 # spanishOn false and frenchOn false
+
+
+
+                self.errorTime = self.errorTimeConst
+                self.error = font.render('Select your language!', True, (0,0,0))
                 print("Select your language!")
             else:
                 if(spanishOn):
@@ -98,6 +123,10 @@ crashed = False
 while not crashed:
     for event in pygame.event.get():
         gameDisplay.fill((255,255,255))
+
+
+
+        
 
         # display text
         gameDisplay.blit(spanish, (207, 91))
